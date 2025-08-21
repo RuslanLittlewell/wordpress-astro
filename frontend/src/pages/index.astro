@@ -1,0 +1,29 @@
+---
+import FAQ from "@/components/MainPage/FAQ.astro";
+import HeroSection from "@/components/MainPage/HeroSection.astro";
+import HowToPay from "@/components/MainPage/HowToPay.astro";
+import MiniCategories from "@/components/MainPage/MiniCategories.astro";
+import Recommendations from "@/components/MainPage/Recommendations.astro";
+import WhyUs from "@/components/MainPage/WhyUs.astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { wpFetch } from "@/lib/wp";
+
+
+const data = await wpFetch(`/acf/v3/pages/10`, );
+const { acf: pageDdata } = data;
+const { hero_block, why_us, req_group, seo, faq } = pageDdata;
+---
+
+<BaseLayout
+  title={hero_block.title}
+  image={hero_block.image}
+  keywords={seo.keywords}
+  description={seo.short_description}
+>
+  <HeroSection data={hero_block} />
+  <MiniCategories />
+  <WhyUs data={why_us} />
+  <Recommendations data={req_group} />
+  <!-- <HowToPay /> -->
+  <FAQ  data={faq}/>
+</BaseLayout>

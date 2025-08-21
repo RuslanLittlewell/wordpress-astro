@@ -1,0 +1,20 @@
+---
+import Container from "@/layouts/Container.astro";
+import MainTitle from "./features/MainTitle.astro";
+import { AccordionTerms } from "../Terms/AccordionTerms";
+
+export interface Points {
+  question: string;
+  answer: string;
+}
+const { data } = Astro.props as {
+  data: { title: string; points: Points[] };
+};
+const terms = data.points.map(i => ({title: i.question, description: i.answer }))
+---
+<section class="py-16 shadow-[inset_0_0_50px_rgba(99,102,241,0.35)]">
+    <Container>
+        <MainTitle title={data.title} />
+        <AccordionTerms {terms} client:load/>
+    </Container>
+</section>

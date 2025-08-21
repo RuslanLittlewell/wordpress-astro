@@ -1,0 +1,75 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import Container from "@/layouts/Container.astro";
+import { wpFetch } from "@/lib/wp";
+
+const { acf } = await wpFetch('/acf/v3/options/options');
+
+---
+
+<BaseLayout title="Контакты">
+  <Container class:list="mt-32 mb-16 bg-zinc-50">
+    <h1 class="mb-6 text-3xl font-bold">Контакты</h1>
+
+    <!-- Контактная информация -->
+    <div class="grid md:grid-cols-2 gap-10 mb-12">
+      <div class="space-y-6">
+        <div>
+          <h2 class="text-xl font-semibold mb-2">Адрес</h2>
+          <p class="text-gray-700">{acf.address}</p>
+        </div>
+        <div>
+          <h2 class="text-xl font-semibold mb-2">Телефон</h2>
+          <a href={`tel:${acf.phone}`} class="text-indigo-700 hover:underline">
+            {acf.phone}
+          </a>
+        </div>
+        <div>
+          <h2 class="text-xl font-semibold mb-2">Email</h2>
+          <a
+            href={`mailto:${acf.email}`}
+            class="text-indigo-600 hover:underline"
+          >
+            {acf.email}
+          </a>
+        </div>
+      </div>
+
+      <!-- Карта (заглушка) -->
+      <div class="rounded-xl overflow-hidden shadow">
+        <iframe
+          src="https://maps.google.com/maps?q=Minsk&t=&z=13&ie=UTF8&iwloc=&output=embed"
+          class="w-full h-64 border-0"
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"></iframe>
+      </div>
+
+      <div />
+          <!-- Форма обратной связи -->
+    <div class="bg-white rounded-xl shadow p-6">
+      <h2 class="text-xl font-semibold mb-4">Напишите нам ваши пожелания или замечания</h2>
+      <form class="space-y-4">
+        <div>
+          <Input type="text" placeholder="Ваше имя" required />
+        </div>
+        <div>
+          <Input type="email" placeholder="Email" required />
+        </div>
+        <div>
+          <Textarea placeholder="Ваше сообщение" rows={5} required />
+        </div>
+        <Button
+          type="submit"
+          className="w-full bg-main-gradient hover:bg-indigo-700 text-white"
+        >
+          Отправить
+        </Button>
+      </form>
+    </div>
+    </div>
+
+  </Container>
+</BaseLayout>

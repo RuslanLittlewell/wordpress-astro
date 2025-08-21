@@ -1,0 +1,59 @@
+---
+import Container from "./Container.astro";
+import { CallbackButton } from "@/components/MainPage/features/Callback";
+import LogoImg from "@/assets/svg/logo.svg";
+const links = [
+  { href: "/", label: "Главная" },
+  { href: "/catalog", label: "Каталог" },
+  { href: "/terms", label: "Условия" },
+  { href: "/posts", label: "Новости" },
+  { href: "/contacts", label: "Контакты" },
+];
+const { data } = Astro.props;
+
+// helper: активен ли линк (включая вложенные маршруты)
+const path = Astro.url.pathname.replace(/\/+$/, "") || "/";
+const isActive = (href: string) => {
+  const clean = (href || "/").replace(/\/+$/, "") || "/";
+  return path === clean || (clean !== "/" && path.startsWith(clean));
+};
+---
+
+<header class="fixed top-0 z-50 w-full bg-main-gradient shadow-md">
+  <Container class:list="w-full flex items-center justify-between p-4">
+    <div class="flex items-center gap-4">
+      <div class="logo">
+        <LogoImg />
+      </div>
+      <div class="text-xs flex flex-col text-white">
+        <span>{data.address}</span>
+        <span>Время работы: {data.work_time}</span>
+      </div>
+      <div><a href={`tel:${data.phone}`} class="text-white font-bold">{data.phone}</a></div>
+    </div>
+
+    <div class="flex items-center gap-6">
+      <nav>
+        <ul class="flex items-center gap-6 pb-2 text-white">
+          {
+            links.map((link) => (
+              <li>
+                <a
+                  href={link.href}
+                  aria-current={isActive(link.href) ? "page" : undefined}
+                  class:list={["inline-block whitespace-nowrap relative"]}
+                >
+                  {link.label}
+                  {isActive(link.href) && (
+                    <span class="absolute h-[1px] block rounded-full w-full bg-white bottom-[-5px] " />
+                  )}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+      <CallbackButton client:load url="http://localhost:8080/wp-json/" />
+    </div>
+  </Container>
+</header>

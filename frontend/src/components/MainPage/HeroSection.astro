@@ -1,0 +1,26 @@
+---
+const { data } = Astro.props;
+import { Image } from "astro:assets";
+import { Button } from "../ui/button";
+---
+
+<section class="relative h-[60vh] mt-[56px]">
+  <div
+    class="relative z-40 text-white p-8 px-[7vw] bg-denim-gradient w-[60%] [clip-path:polygon(0_0,100%_0,85%_100%,0_100%)] h-[60vh] flex flex-col justify-center items-start space-y-4"
+  >
+    <h1 class="mb-6 text-6xl text-white font-bold" set:html={data.title} />
+    <p class="text-white text-2xl" set:html={data.description} />
+    <Button className="bg-white text-black h-12 text-xl px-12 hover:bg-white/50"><a href="/catalog">Смотреть каталог</a></Button>
+  </div>
+
+  <Image
+    src={data.image}
+    width={1000}
+    height={200}
+    alt="party"
+    format="webp"
+    quality={80}
+    class="absolute top-0 right-0 w-1/2 h-full object-cover h-[60vh]"
+  />
+
+</section>

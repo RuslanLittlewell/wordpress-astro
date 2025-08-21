@@ -1,0 +1,134 @@
+---
+import Container from "@/layouts/Container.astro";
+import MainTitle from "./features/MainTitle.astro";
+
+export interface Props {
+  title?: string;
+  personalText?: string;
+  companyTitle?: string;
+  companyDetails?: string; // то, что копируем целиком
+}
+
+const {
+  title = "Методы оплаты услуг",
+  personalText = "При оформлении или продлении договора проката, оплату можно произвести наличными деньгами или банковскими картами Visa, Mastercard, Belcard.",
+  companyTitle = "ЮРИДИЧЕСКИЕ ЛИЦА",
+  companyDetails = `ООО "TEST" УНП 000000000,
+р/с BY00 AKBB 0000 0000 0000 0000 0000 BYN
+в №400 ОАО «АСБ Беларусбанк»
+Код банка — AKBBBY2X`,
+} = Astro.props as Props;
+---
+
+<section aria-labelledby="payments-title" class="relative bg-zinc-50 py-16">
+  <div
+    class="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-zinc-300 to-transparent"
+  >
+  </div>
+
+  <Container big>
+    <MainTitle {title} />
+
+    <div class="grid gap-6 md:grid-cols-2">
+      <!-- Физические лица -->
+      <article class="rounded-3xl p-8 border-2 border-indigo-200 bg-gray-100">
+        <h3
+          class="mb-6 text-center text-2xl font-semibold tracking-tight text-foreground"
+        >
+          ФИЗИЧЕСКИЕ ЛИЦА
+        </h3>
+
+        <div class="mb-6 grid place-items-center">
+          <div
+            class="grid h-24 w-24 place-items-center rounded-2xl bg-white shadow-inner"
+          >
+            <span class="text-5xl" aria-hidden>👛</span>
+          </div>
+        </div>
+
+        <p class="mx-auto max-w-prose text-lg leading-7 text-muted-foreground">
+          {personalText}
+        </p>
+      </article>
+
+      <!-- Юридические лица -->
+      <article
+        class="relative rounded-3xl p-8 border-2 border-indigo-200 bg-gray-100"
+      >
+        <h3
+          class="mb-6 text-center text-2xl font-semibold tracking-tight text-foreground"
+        >
+          {companyTitle}
+        </h3>
+
+        <div class="mb-6 grid place-items-center">
+          <div
+            class="grid h-24 w-24 place-items-center rounded-2xl bg-white shadow-inner"
+          >
+            <span class="text-5xl" aria-hidden>🏦</span>
+          </div>
+        </div>
+
+        <pre
+          id="company-details"
+          class="mx-auto max-w-prose whitespace-pre-wrap break-words rounded-xl bg-white/70 p-4 text-base leading-7 text-foreground">
+{companyDetails}
+        </pre>
+
+        <div class="mt-4 flex justify-center">
+          <button
+            type="button"
+            class="inline-flex items-center gap-2 rounded-xl border bg-white px-4 py-2 text-sm font-medium text-indigo-700 shadow-sm transition hover:bg-indigo-50 active:scale-[0.99]"
+            data-copy="#company-details"
+          >
+            Скопировать реквизиты
+          </button>
+        </div>
+      </article>
+    </div>
+  </Container>
+
+  <!-- копирование в буфер -->
+  <script is:inline>
+    document.addEventListener(
+      "astro:page-load",
+      () => {
+        const btn =
+          document.currentScript?.previousElementSibling?.querySelector?.(
+            "[data-copy]"
+          );
+        if (btn) {
+          btn.addEventListener("click", async () => {
+            const selector = btn.getAttribute("data-copy");
+            const el = selector ? document.querySelector(selector) : null;
+            const text = el?.textContent?.trim() ?? "";
+            try {
+              await navigator.clipboard.writeText(text);
+              btn.textContent = "Скопировано!";
+              setTimeout(
+                () => (btn.textContent = "Скопировать реквизиты"),
+                2000
+              );
+            } catch {
+              // fallback
+              const ta = document.createElement("textarea");
+              ta.value = text;
+              document.body.appendChild(ta);
+              ta.select();
+              try {
+                btn.textContent = "Скопировано!";
+              } finally {
+                document.body.removeChild(ta);
+                setTimeout(
+                  () => (btn.textContent = "Скопировать реквизиты"),
+                  2000
+                );
+              }
+            }
+          });
+        }
+      },
+      { once: true }
+    );
+  </script>
+</section>

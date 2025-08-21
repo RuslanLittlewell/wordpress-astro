@@ -1,0 +1,87 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Container from "@/layouts/Container.astro";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import CatalogCard from "@/components/Catalog/CatalogCard.astro";
+import { wpFetch } from "@/lib/wp";
+
+interface Category {
+  id: number;
+  name: string;
+  slug: string;
+  description?: string;
+  acf?: {
+    image?: string;
+    seo_title: string;
+    seo_image: string;
+  };
+}
+
+interface WPItem {
+  id: number;
+  title: {
+    rendered: string;
+  };
+  slug: string;
+  menu_order: number;
+  acf?: {
+    image?: string;
+  };
+  featured_media?: number;
+  featured_media_url?: string;
+}
+
+export async function getStaticPaths() {
+  const categories = await wpFetch(`/wp/v2/inv-cat`);
+  return categories.map((category: Category) => ({
+    params: { slug: category.slug },
+    props: { category },
+  }));
+}
+
+const { category } = Astro.props as { category: Category };
+const { slug } = Astro.params;
+const items = await wpFetch(`/wp/v2/goods?inv-cat=${category.id}`);
+---
+
+<BaseLayout
+  title={`${category.acf?.seo_title} > ${category.name}`}
+  description={category.description}
+  image={category.acf?.image}
+>
+  <Container class:list="mt-32 mb-16 bg-zinc-50">
+    <Breadcrumb>
+      <BreadcrumbList>
+        <BreadcrumbItem>
+          <BreadcrumbLink href="/catalog">Каталог</BreadcrumbLink>
+        </BreadcrumbItem>
+        <BreadcrumbSeparator />
+        <BreadcrumbItem>
+          <BreadcrumbPage>{category.name}</BreadcrumbPage>
+        </BreadcrumbItem>
+      </BreadcrumbList>
+    </Breadcrumb>
+    <h1 class="mb-8 text-4xl font-bold" set:html={category.name} />
+    {
+      category.description && (
+        <div
+          class="mb-8 prose prose-lg max-w-none"
+          set:html={category.description}
+        />
+      )
+    }
+
+    <div
+      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 [&>*]:first:order-first"
+    >
+      {items.map((item: WPItem) => <CatalogCard item={item} slug={slug} />)}
+    </div>
+  </Container>
+</BaseLayout>

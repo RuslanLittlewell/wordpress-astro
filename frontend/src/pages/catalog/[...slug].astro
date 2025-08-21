@@ -1,0 +1,145 @@
+---
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Container from "@/layouts/Container.astro";
+import { Image } from "astro:assets";
+import { OrderForm } from "@/components/Catalog/features/OrderForm";
+import { ItemTabs } from "@/components/Catalog/features/ItemTabs";
+import Recommended from "@/components/Catalog/Recommended.astro";
+import { wpFetch } from "@/lib/wp";
+
+interface Category {
+  id: number;
+  name: string;
+  slug: string;
+  description?: string;
+  acf?: {
+    image?: string;
+  };
+}
+
+interface Good {
+  id: number;
+  title: {
+    rendered: string;
+  };
+  slug: string;
+  content: {
+    rendered: string;
+  };
+  acf?: {
+    image?: string;
+    price_1_day?: string;
+    price_2_days?: string;
+    [key: string]: any;
+  };
+  featured_media?: string;
+}
+export async function getStaticPaths() {
+  const WP_URL = import.meta.env.WP_API_INTERNAL_BASE;
+  // Получаем все категории
+  const categories = await wpFetch(`/wp/v2/inv-cat`);
+
+  // Получаем товары для каждой категории
+  const paths = await Promise.all(
+    categories.map(async (category: Category) => {
+      const goods = await wpFetch(`/wp/v2/goods?inv_cat=${category.id}`);
+
+      return goods.map((good: Good) => ({
+        params: {
+          slug: `${category.slug}/${good.slug}`, // формат: category-slug/good-slug
+        },
+        props: { good, category },
+      }));
+    })
+  );
+
+  return paths.flat();
+}
+
+const { good, category } = Astro.props;
+const seo = good.acf.seo;
+---
+
+<BaseLayout
+  title={`${seo?.seo_title || "Гродно прокат"} > ${good.title.rendered}`}
+  image={seo?.seo_image || good.acf.image}
+  keywords={seo?.keywords}
+  description={seo?.short_description}
+>
+  <Container class:list="mt-32 mb-16 bg-zinc-50">
+    <Breadcrumb>
+      <BreadcrumbList>
+        <BreadcrumbItem>
+          <BreadcrumbLink href="/catalog">Каталог</BreadcrumbLink>
+        </BreadcrumbItem>
+        <BreadcrumbSeparator />
+        <BreadcrumbItem>
+          <BreadcrumbLink href={`/catalog/${category.slug}`}
+            >{category.name}</BreadcrumbLink
+          >
+        </BreadcrumbItem>
+        <BreadcrumbSeparator />
+        <BreadcrumbItem>
+          <BreadcrumbPage>{good.title.rendered}</BreadcrumbPage>
+        </BreadcrumbItem>
+      </BreadcrumbList>
+    </Breadcrumb>
+    <article class="">
+      <div class="grid md:grid-cols-[59%_38.5%] gap-8">
+        <!-- Изображение -->
+        <div class="relative">
+          {
+            good.acf?.image && (
+              <Image
+                src={good.acf.image}
+                width={500}
+                height={500}
+                alt={good.title.rendered}
+                class="w-full rounded-lg shadow-lg object-cover aspect-4/3"
+              />
+            )
+          }
+        </div>
+
+        <div>
+          <h1 class="text-2xl font-bold mb-4" set:html={good.title.rendered} />
+
+          <div class="border-2 border-indigo-200 bg-gray-100 p-6 rounded-xl">
+            <OrderForm
+              productName={good.title.rendered}
+              client:load
+              price1Day={good.acf?.price_1_day}
+              price2Day={good.acf?.price_2_day}
+              additionalItem={good.acf?.additional_item}
+              url="http://localhost:8080/wp-json/"
+            />
+          </div>
+        </div>
+        <div
+          class="md:col-span-2 border-2 border-indigo-200 bg-gray-100 p-6 rounded-xl"
+        >
+          <ItemTabs
+            client:load
+            description={good.content.rendered}
+            features={good.acf?.features}
+            video={good.acf?.video_link}
+            className="md:col-span-2"
+          />
+        </div>
+      </div>
+      {
+        good.acf.recommended?.length && (
+          <Recommended data={good.acf.recommended} />
+        )
+      }
+    </article>
+  </Container>
+</BaseLayout>

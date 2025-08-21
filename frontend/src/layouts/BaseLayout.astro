@@ -1,0 +1,38 @@
+---
+import "@styles/tailwind.css";
+import { ClientRouter } from "astro:transitions";
+import Header from "@/layouts/Header.astro";
+import Footer from "./Footer.astro";
+import Seo from "./Seo.astro";
+import { FormStatusModal } from "@/components/MainPage/features/FormStatusModal";
+import { wpFetch } from "@/lib/wp";
+
+const {
+  title,
+  description = "",
+  keywords = "",
+  canonical = "",
+  image,
+  jsonLd,
+} = Astro.props;
+const { acf } = await wpFetch('/acf/v3/options/options');
+---
+
+<!doctype html>
+<html lang="ru" class="h-full">
+  <head>
+    <Seo {title} {description} {keywords} {canonical} {image} />
+    {jsonLd &&<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <ClientRouter />
+  </head>
+  <body class="min-h-screen bg-gray-50 text-gray-900 flex flex-col">
+    <Header data={acf} />
+    <main class="flex-1">
+      <slot />
+      <FormStatusModal client:load />
+    </main>
+    <Footer />
+  </body>
+</html>

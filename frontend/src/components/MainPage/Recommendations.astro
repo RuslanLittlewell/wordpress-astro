@@ -1,0 +1,21 @@
+---
+import Container from "@/layouts/Container.astro";
+import { HeroCarousel } from "./features/HeroCarousel";
+import MainTitle from "./features/MainTitle.astro";
+import { fetchGoodsWithACF } from "@/lib/wp";
+
+
+const { data } = Astro.props;
+const raw = data.recommendations ?? [];
+const ids = raw.map((x: any) => x.option?.ID ?? x.ID);
+const goods = await fetchGoodsWithACF(ids);
+---
+
+<section class="py-16 shadow-[inset_0_0_50px_rgba(99,102,241,0.35)]">
+  <Container>
+    <MainTitle title={data.title} />
+    <HeroCarousel data={goods} client:load/>
+  </Container>
+</section>
+
+
