@@ -1,0 +1,178 @@
+# Основной домен (если у вас есть)
+your-domain.com {
+    # Автоматическое получение SSL сертификата
+    tls {
+        on_demand
+    }
+
+    # Логирование
+    log {
+        output file /var/log/caddy/access.log
+        format json
+    }
+
+    # Обработка статических файлов фронтенда
+    handle /* {
+        root * /srv/frontend
+        try_files {path} {path}/ /index.html
+        file_server
+    }
+
+    # API запросы к WordPress
+    handle /wp-json/* {
+        reverse_proxy wordpress:80
+    }
+
+    # WordPress админка
+    handle /wp-admin/* {
+        reverse_proxy wordpress:80
+    }
+
+    # WordPress логин
+    handle /wp-login.php {
+        reverse_proxy wordpress:80
+    }
+
+    # Загрузки WordPress
+    handle /wp-content/uploads/* {
+        reverse_proxy wordpress:80
+    }
+
+    # Заголовки безопасности
+    header {
+        # HSTS
+        Strict-Transport-Security "max-age=31536000; includeSubDomains"
+        # XSS Protection
+        X-Content-Type-Options nosniff
+        X-Frame-Options DENY
+        X-XSS-Protection "1; mode=block"
+        # Referrer Policy
+        Referrer-Policy "strict-origin-when-cross-origin"
+        # Content Security Policy
+        Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https:; frame-ancestors 'none';"
+    }
+
+    # Сжатие
+    encode gzip
+}
+
+# AWS Public DNS (основной конфиг для начала)
+ec2-13-61-2-249.eu-north-1.compute.amazonaws.com {
+    # Автоматическое получение SSL сертификата
+    tls {
+        on_demand
+    }
+
+    # Логирование
+    log {
+        output file /var/log/caddy/access.log
+        format json
+    }
+
+    # Обработка статических файлов фронтенда
+    handle /* {
+        root * /srv/frontend
+        try_files {path} {path}/ /index.html
+        file_server
+    }
+
+    # API запросы к WordPress
+    handle /wp-json/* {
+        reverse_proxy wordpress:80
+    }
+
+    # WordPress админка
+    handle /wp-admin/* {
+        reverse_proxy wordpress:80
+    }
+
+    # WordPress логин
+    handle /wp-login.php {
+        reverse_proxy wordpress:80
+    }
+
+    # Загрузки WordPress
+    handle /wp-content/uploads/* {
+        reverse_proxy wordpress:80
+    }
+
+    # Заголовки безопасности
+    header {
+        # HSTS
+        Strict-Transport-Security "max-age=31536000; includeSubDomains"
+        # XSS Protection
+        X-Content-Type-Options nosniff
+        X-Frame-Options DENY
+        X-XSS-Protection "1; mode=block"
+        # Referrer Policy
+        Referrer-Policy "strict-origin-when-cross-origin"
+        # Content Security Policy
+        Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https:; frame-ancestors 'none';"
+    }
+
+    # Сжатие
+    encode gzip
+}
+
+# IP адрес (fallback)
+13.61.2.249 {
+    # Автоматическое получение SSL сертификата
+    tls {
+        on_demand
+    }
+
+    # Логирование
+    log {
+        output file /var/log/caddy/access.log
+        format json
+    }
+
+    # Обработка статических файлов фронтенда
+    handle /* {
+        root * /srv/frontend
+        try_files {path} {path}/ /index.html
+        file_server
+    }
+
+    # API запросы к WordPress
+    handle /wp-json/* {
+        reverse_proxy wordpress:80
+    }
+
+    # WordPress админка
+    handle /wp-admin/* {
+        reverse_proxy wordpress:80
+    }
+
+    # WordPress логин
+    handle /wp-login.php {
+        reverse_proxy wordpress:80
+    }
+
+    # Загрузки WordPress
+    handle /wp-content/uploads/* {
+        reverse_proxy wordpress:80
+    }
+
+    # Заголовки безопасности
+    header {
+        # HSTS
+        Strict-Transport-Security "max-age=31536000; includeSubDomains"
+        # XSS Protection
+        X-Content-Type-Options nosniff
+        X-Frame-Options DENY
+        X-XSS-Protection "1; mode=block"
+        # Referrer Policy
+        Referrer-Policy "strict-origin-when-cross-origin"
+        # Content Security Policy
+        Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https:; frame-ancestors 'none';"
+    }
+
+    # Сжатие
+    encode gzip
+}
+
+# Редирект с www на основной домен
+www.your-domain.com {
+    redir https://your-domain.com{uri} permanent
+}

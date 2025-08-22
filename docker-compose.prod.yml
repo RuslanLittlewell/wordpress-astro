@@ -1,0 +1,125 @@
+version: "3.9"
+
+services:
+  db:
+    image: mariadb:10.11
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-wordpress}
+      MYSQL_USER: ${MYSQL_USER:-wp}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-wp}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+    volumes:
+      - db-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mariadb-admin ping -h localhost -uroot -p$$MYSQL_ROOT_PASSWORD --silent || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  wordpress:
+    build: ./wordpress
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: ${MYSQL_USER:-wp}
+      WORDPRESS_DB_PASSWORD: ${MYSQL_PASSWORD:-wp}
+      WORDPRESS_DB_NAME: ${MYSQL_DATABASE:-wordpress}
+      WP_HOME: ${WP_HOME:-https://your-domain.com}
+      WP_SITEURL: ${WP_SITEURL:-https://your-domain.com}
+      WP_CORS_ALLOWED_ORIGIN: ${WP_CORS_ALLOWED_ORIGIN:-https://your-domain.com}
+    volumes:
+      - wp-data:/var/www/html
+      - ./wordpress/wp-content/mu-plugins:/var/www/html/wp-content/mu-plugins
+      - ./wordpress/.htaccess:/var/www/html/.htaccess
+      - ./scripts/wp-setup.sh:/var/www/html/wp-setup.sh
+      - ./wordpress/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  wp-cli:
+    image: wordpress:cli-php8.3
+    depends_on:
+      wordpress:
+        condition: service_started
+      db:
+        condition: service_healthy
+    working_dir: /var/www/html
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: ${MYSQL_USER:-wp}
+      WORDPRESS_DB_PASSWORD: ${MYSQL_PASSWORD:-wp}
+      WORDPRESS_DB_NAME: ${MYSQL_DATABASE:-wordpress}
+      WP_HOME: ${WP_HOME:-https://your-domain.com}
+      WP_SITEURL: ${WP_SITEURL:-https://your-domain.com}
+      WP_ADMIN_USER: ${WP_ADMIN_USER:-admin}
+      WP_ADMIN_PASSWORD: ${WP_ADMIN_PASSWORD:-adminpass}
+      WP_ADMIN_EMAIL: ${WP_ADMIN_EMAIL:-admin@example.com}
+    volumes:
+      - wp-data:/var/www/html
+      - ./scripts/wp-setup.sh:/var/www/html/wp-setup.sh
+    command: >
+      bash -lc "
+      set -e;
+      DB_HOST=$${WORDPRESS_DB_HOST%:*};
+      until mariadb-admin --ssl=0 --silent ping -h $$DB_HOST -u\"$$WORDPRESS_DB_USER\" -p\"$$WORDPRESS_DB_PASSWORD\"; do
+        echo 'Waiting for DB (mysqladmin)…'; sleep 3;
+      done;
+      cd /var/www/html;
+      if [ ! -f wp-config.php ]; then
+        echo 'Creating wp-config.php…';
+        wp config create --dbname=\"$$WORDPRESS_DB_NAME\" --dbuser=\"$$WORDPRESS_DB_USER\" --dbpass=\"$$WORDPRESS_DB_PASSWORD\" --dbhost=\"$$WORDPRESS_DB_HOST\" --skip-check;
+      fi;
+      if ! wp core is-installed >/dev/null 2>&1; then
+        echo 'Running wp core install…';
+        wp core install --url=\"$$WP_HOME\" --title=\"Docker WP\" --admin_user=\"$$WP_ADMIN_USER\" --admin_password=\"$$WP_ADMIN_PASSWORD\" --admin_email=\"$$WP_ADMIN_EMAIL\" --skip-email;
+        bash /var/www/html/wp-setup.sh || true;
+      fi;
+      echo 'WP ready.';
+      tail -f /dev/null
+      "
+    networks:
+      - app-network
+
+  frontend:
+    build:
+      context: ./frontend
+      target: prod
+    environment:
+      PUBLIC_WP_API_BASE: ${PUBLIC_WP_API_BASE:-http://wordpress/wp-json}
+      WP_API_INTERNAL_BASE: ${WP_API_INTERNAL_BASE:-http://wordpress/wp-json}
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  caddy:
+    image: caddy:2
+    depends_on:
+      - wordpress
+      - frontend
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile.prod:/etc/caddy/Caddyfile:ro
+      - ./frontend/dist:/srv/frontend:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    restart: unless-stopped
+    networks:
+      - app-network
+
+volumes:
+  db-data:
+  wp-data:
+  caddy-data:
+  caddy-config:
+
+networks:
+  app-network:
+    driver: bridge
