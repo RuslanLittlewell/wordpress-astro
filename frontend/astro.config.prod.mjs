@@ -9,6 +9,8 @@ export default defineConfig({
   build: {
     assets: 'assets',
   },
+  site: 'https://ec2-13-61-2-249.eu-north-1.compute.amazonaws.com',
+  base: '/',
   vite: {
     resolve: {
       alias: {
