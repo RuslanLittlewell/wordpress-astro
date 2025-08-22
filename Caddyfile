@@ -1,0 +1,5 @@
+cat > Caddyfile << 'EOF'
+example.com {
+  reverse_proxy wordpress:80
+}
+EOF
