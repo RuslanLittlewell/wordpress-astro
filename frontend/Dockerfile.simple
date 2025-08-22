@@ -8,22 +8,21 @@ RUN npm ci
 # Копируем все файлы проекта
 COPY . .
 
-FROM base AS dev
-EXPOSE 4321
-CMD ["npm", "run", "dev", "--", "--host", "--port", "4321"]
+# Создаем production конфигурацию
+RUN cp astro.config.prod.mjs astro.config.mjs
 
-FROM base AS build
-# Устанавливаем переменные окружения для production
+# Устанавливаем переменные окружения
 ENV NODE_ENV=production
 
-# Собираем проект с production конфигурацией
-RUN cp astro.config.prod.mjs astro.config.mjs && npm run build
+# Собираем проект
+RUN npm run build
 
+# Production stage с nginx
 FROM nginx:alpine AS prod
 WORKDIR /usr/share/nginx/html
 
 # Копируем собранные файлы
-COPY --from=build /app/dist .
+COPY --from=base /app/dist .
 
 # Копируем конфигурацию nginx
 COPY nginx.conf /etc/nginx/conf.d/default.conf
