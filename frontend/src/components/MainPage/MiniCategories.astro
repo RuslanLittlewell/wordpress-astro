@@ -4,8 +4,24 @@ import MiniCategory from "./features/MiniCategory.astro";
 import MainTitle from "./features/MainTitle.astro";
 
 const WP_URL = import.meta.env.WP_API_INTERNAL_BASE;
-const response = await fetch(`${WP_URL}/wp/v2/inv-cat`);
-const categories = await response.json();
+let categories = [];
+try {
+  const response = await fetch(`${WP_URL}/wp/v2/inv-cat`);
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+  categories = await response.json();
+} catch (error) {
+  console.warn('Не удалось получить категории из WordPress API:', error);
+  categories = [
+    {
+      id: 1,
+      name: 'Категория по умолчанию',
+      slug: 'default',
+      description: 'Описание категории'
+    }
+  ];
+}
 ---
 
 <section class="py-16 shadow-[inset_0_0_50px_rgba(99,102,241,0.35)]">

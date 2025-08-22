@@ -10,7 +10,7 @@ export interface Points {
 }
 
 const { data } = Astro.props as {
-  data: { title: string; points: Points[] };
+  data: { title: string; points?: Points[] };
 };
 
 const files = import.meta.glob('/src/assets/svg/*.svg', {
@@ -33,7 +33,7 @@ const getIconUrl = (name: string) => icons[name] ?? icons[`${name}.svg`] ?? '';
   <Container>
     <MainTitle title={data.title} />
     <ul class="grid gap-12 sm:grid-cols-2 lg:grid-cols-3">
-      {data.points.map(({ title, description, image }) => {
+      {(data.points || []).map(({ title, description, image }) => {
         const icon = getIconUrl(image);
         return (
           <li class="flex items-start gap-5">

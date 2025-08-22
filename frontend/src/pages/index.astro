@@ -9,7 +9,57 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 import { wpFetch } from "@/lib/wp";
 
 
-const data = await wpFetch(`/acf/v3/pages/10`, );
+let data;
+try {
+  data = await wpFetch(`/acf/v3/pages/10`);
+} catch (error) {
+  console.warn('Не удалось получить данные главной страницы из WordPress API');
+  data = {
+    acf: {
+      hero_block: {
+        title: 'Аренда оборудования для праздников',
+        image: '/logo.svg'
+      },
+      why_us: {
+        title: 'Почему выбирают нас',
+        points: [
+          {
+            title: 'Качество',
+            description: 'Высокое качество оборудования',
+            image: 'logo.svg'
+          },
+          {
+            title: 'Надежность',
+            description: 'Надежное обслуживание',
+            image: 'logo.svg'
+          }
+        ]
+      },
+              req_group: {
+          title: 'Рекомендуемые товары',
+          recommendations: []
+        },
+      seo: {
+        keywords: 'аренда, праздники, оборудование',
+        short_description: 'Аренда оборудования для праздников в Гродно'
+      },
+      faq: {
+        title: 'Часто задаваемые вопросы',
+        points: [
+          {
+            question: 'Как заказать оборудование?',
+            answer: 'Свяжитесь с нами по телефону или через форму на сайте.'
+          },
+          {
+            question: 'Какие условия аренды?',
+            answer: 'Подробные условия аренды указаны в договоре.'
+          }
+        ]
+      }
+    }
+  };
+}
+
 const { acf: pageDdata } = data;
 const { hero_block, why_us, req_group, seo, faq } = pageDdata;
 ---

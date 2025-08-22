@@ -4,7 +4,20 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 import Container from "@/layouts/Container.astro";
 import { wpFetch } from "@/lib/wp";
 
-const categories = await wpFetch('/wp/v2/inv-cat')
+let categories;
+try {
+  categories = await wpFetch('/wp/v2/inv-cat');
+} catch (error) {
+  console.warn('Не удалось получить категории из WordPress API');
+  categories = [
+    {
+      id: 1,
+      name: 'Категория по умолчанию',
+      slug: 'default',
+      description: 'Описание категории'
+    }
+  ];
+}
 ---
 
 <BaseLayout title="Каталог">

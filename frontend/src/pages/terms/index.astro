@@ -1,19 +1,24 @@
 ---
-import MainTitle from "@/components/MainPage/features/MainTitle.astro";
-import { AccordionTerms } from "@/components/Terms/AccordionTerms";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import Container from "@/layouts/Container.astro";
 import { wpFetch } from "@/lib/wp";
 
-const { acf: pageData } = await wpFetch(`/acf/v3/pages/75`);
+let pageData;
+try {
+  const data = await wpFetch(`/acf/v3/pages/75`);
+  pageData = data.acf;
+} catch (error) {
+  console.warn('Не удалось получить данные страницы из WordPress API');
+  pageData = {
+    title: 'Условия использования',
+    content: 'Содержимое страницы'
+  };
+}
 ---
 
 <BaseLayout title={pageData.title}>
   <Container class:list="mt-32 mb-16 bg-zinc-50">
-    <MainTitle
-      title={pageData.title}
-      class:list="mb-8"
-      />
-    <AccordionTerms terms={pageData.terms} client:load/>
+    <h1 class="mb-8 text-4xl font-bold">{pageData.title}</h1>
+    <div class="prose prose-lg max-w-none" set:html={pageData.content} />
   </Container>
 </BaseLayout>

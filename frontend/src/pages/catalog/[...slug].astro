@@ -43,25 +43,56 @@ interface Good {
   featured_media?: string;
 }
 export async function getStaticPaths() {
-  const WP_URL = import.meta.env.WP_API_INTERNAL_BASE;
-  // Получаем все категории
-  const categories = await wpFetch(`/wp/v2/inv-cat`);
+  try {
+    const WP_URL = import.meta.env.WP_API_INTERNAL_BASE;
+    // Получаем все категории
+    const categories = await wpFetch(`/wp/v2/inv-cat`);
 
-  // Получаем товары для каждой категории
-  const paths = await Promise.all(
-    categories.map(async (category: Category) => {
-      const goods = await wpFetch(`/wp/v2/goods?inv_cat=${category.id}`);
+    // Получаем товары для каждой категории
+    const paths = await Promise.all(
+      categories.map(async (category: Category) => {
+        const goods = await wpFetch(`/wp/v2/goods?inv_cat=${category.id}`);
 
-      return goods.map((good: Good) => ({
-        params: {
-          slug: `${category.slug}/${good.slug}`, // формат: category-slug/good-slug
+        return goods.map((good: Good) => ({
+          params: {
+            slug: `${category.slug}/${good.slug}`, // формат: category-slug/good-slug
+          },
+          props: { good, category },
+        }));
+      })
+    );
+
+    return paths.flat();
+  } catch (error) {
+    console.warn('WordPress API недоступен во время сборки, создаем fallback страницы');
+    // Fallback для production сборки
+    return [
+      {
+        params: { slug: 'default/default' },
+        props: { 
+          good: {
+            id: 1,
+            title: { rendered: 'Товар по умолчанию' },
+            content: { rendered: 'Описание товара' },
+            acf: {
+              image: '',
+              seo: { seo_title: 'Товар', seo_image: '' },
+              price_1_day: '0',
+              price_2_day: '0',
+              features: [],
+              video_link: '',
+              recommended: []
+            }
+          },
+          category: {
+            id: 1,
+            name: 'Каталог',
+            slug: 'default'
+          }
         },
-        props: { good, category },
-      }));
-    })
-  );
-
-  return paths.flat();
+      }
+    ];
+  }
 }
 
 const { good, category } = Astro.props;

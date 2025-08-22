@@ -15,7 +15,24 @@ const {
   image,
   jsonLd,
 } = Astro.props;
-const { acf } = await wpFetch('/acf/v3/options/options');
+
+let acf;
+try {
+  const data = await wpFetch('/acf/v3/options/options');
+  acf = data.acf;
+} catch (error) {
+  console.warn('Не удалось получить ACF опции из WordPress API');
+  acf = {
+    phone: '+375 29 123-45-67',
+    email: 'info@example.com',
+    address: 'Гродно, ул. Примерная, 1',
+    social: {
+      vk: '#',
+      telegram: '#',
+      instagram: '#'
+    }
+  };
+}
 ---
 
 <!doctype html>

@@ -6,8 +6,8 @@ import { fetchGoodsWithACF } from "@/lib/wp";
 
 
 const { data } = Astro.props;
-const raw = data.recommendations ?? [];
-const ids = raw.map((x: any) => x.option?.ID ?? x.ID);
+const raw = data?.recommendations ?? [];
+const ids = raw?.map((x: any) => x.option?.ID ?? x.ID) ?? [];
 const goods = await fetchGoodsWithACF(ids);
 ---
 

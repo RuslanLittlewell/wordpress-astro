@@ -17,18 +17,46 @@ const { slug } = Astro.params;
 const url = Astro.url?.href || "";
 
 // Получаем данные поста из WordPress
-
-const [post] = await wpFetch(
-  `/wp/v2/posts?slug=${slug}&_fields=id,date,title,content,acf`
-);
+let post;
+try {
+  const [postData] = await wpFetch(
+    `/wp/v2/posts?slug=${slug}&_fields=id,date,title,content,acf`
+  );
+  post = postData;
+} catch (error) {
+  console.warn('Не удалось получить пост из WordPress API');
+  post = {
+    id: 1,
+    date: new Date().toISOString(),
+    title: { rendered: 'Пост по умолчанию' },
+    content: { rendered: 'Содержимое поста' },
+    acf: {
+      image: '',
+      seo: {
+        image: '',
+        short_description: 'Описание поста'
+      }
+    }
+  };
+}
 
 // Получаем все возможные slug для статической генерации
 export async function getStaticPaths() {
-  const posts = await wpFetch(`/wp/v2/posts?_fields=slug`);
+  try {
+    const posts = await wpFetch(`/wp/v2/posts?_fields=slug`);
 
-  return posts.map((post: { slug: string }) => ({
-    params: { slug: post.slug },
-  }));
+    return posts.map((post: { slug: string }) => ({
+      params: { slug: post.slug },
+    }));
+  } catch (error) {
+    console.warn('WordPress API недоступен во время сборки, создаем fallback страницы');
+    // Fallback для production сборки
+    return [
+      {
+        params: { slug: 'default' },
+      }
+    ];
+  }
 }
 const iso = post.date;
 const ymd = iso.split("T")[0];

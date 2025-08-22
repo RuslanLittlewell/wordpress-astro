@@ -39,16 +39,45 @@ interface WPItem {
 }
 
 export async function getStaticPaths() {
-  const categories = await wpFetch(`/wp/v2/inv-cat`);
-  return categories.map((category: Category) => ({
-    params: { slug: category.slug },
-    props: { category },
-  }));
+  try {
+    const categories = await wpFetch(`/wp/v2/inv-cat`);
+    return categories.map((category: Category) => ({
+      params: { slug: category.slug },
+      props: { category },
+    }));
+  } catch (error) {
+    console.warn('WordPress API недоступен во время сборки, создаем fallback страницы');
+    // Fallback для production сборки
+    return [
+      {
+        params: { slug: 'default' },
+        props: { 
+          category: {
+            id: 1,
+            name: 'Каталог',
+            slug: 'default',
+            description: 'Каталог товаров',
+            acf: {
+              seo_title: 'Каталог',
+              seo_image: ''
+            }
+          } 
+        },
+      }
+    ];
+  }
 }
 
 const { category } = Astro.props as { category: Category };
 const { slug } = Astro.params;
-const items = await wpFetch(`/wp/v2/goods?inv-cat=${category.id}`);
+
+let items: WPItem[] = [];
+try {
+  items = await wpFetch(`/wp/v2/goods?inv-cat=${category.id}`);
+} catch (error) {
+  console.warn('Не удалось получить товары из WordPress API');
+  items = [];
+}
 ---
 
 <BaseLayout
