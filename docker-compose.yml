@@ -97,8 +97,8 @@ services:
       context: ./frontend
       target: dev
     environment:
-      PUBLIC_WP_API_BASE: ${PUBLIC_WP_API_BASE:-http://localhost:8080/wp-json}
-      WP_API_INTERNAL_BASE: ${WP_API_INTERNAL_BASE:-http://wordpress/wp-json}
+      PUBLIC_WP_API_BASE: ${PUBLIC_WP_API_BASE:-http://13.61.2.249/wp-json}
+      WP_API_INTERNAL_BASE: ${WP_API_INTERNAL_BASE:-http://13.61.2.249/wp-json}
     volumes:
       - ./frontend:/app
       - /app/node_modules
