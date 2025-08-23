@@ -9,9 +9,9 @@ export const CarouselCard: FC<Props> = ({ url, image, price, title }) => {
   return (
     <a
       href={url}
-      className="group block p-6 bg-white rounded-lg border hover:shadow-lg transition-all hover:-translate-y-1"
+      className="group block p-2 sm:p-3 md:p-4 lg:p-6 bg-white rounded-lg border hover:shadow-lg transition-all hover:-translate-y-1"
     >
-      <h2 className="text-lg font-semibold mb-2 group-hover:text-indigo-600 transition-colors">
+      <h2 className="text-xs sm:text-sm md:text-md lg:text-lg font-semibold mb-2 group-hover:text-indigo-600 transition-colors">
         {title}
       </h2>
       <div className="relative flex-1 w-full overflow-hidden rounded-lg bg-gray-100">
@@ -42,7 +42,7 @@ export const CarouselCard: FC<Props> = ({ url, image, price, title }) => {
           </div>
         )}
       </div>
-      <p className="text-center text-xl font-semibold mt-6">от <span className="text-indigo-600">{price} BYN</span> в сутки</p>
+      <p className="text-center text-sm sm:text-md md:text-lg lg:text-xl font-semibold mt-6">от <span className="text-indigo-600">{price} BYN</span> в сутки</p>
     </a>
   );
 };

@@ -11,7 +11,7 @@ const ids = raw.map((x: any) => x.option?.ID ?? x.ID);
 const goods = await fetchGoodsWithACF(ids);
 ---
 
-<section class="py-16 shadow-[inset_0_0_50px_rgba(99,102,241,0.35)]">
+<section class="py-8 sm:py-12 md:py-16 lg:py-20 shadow-[inset_0_0_50px_rgba(99,102,241,0.35)]">
   <Container>
     <MainTitle title={data.title} />
     <HeroCarousel data={goods} client:load/>

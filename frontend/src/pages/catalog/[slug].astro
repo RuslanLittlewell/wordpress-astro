@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import CatalogCard from "@/components/Catalog/CatalogCard.astro";
 import { wpFetch } from "@/lib/wp";
+import MainTitle from "@/components/MainPage/features/MainTitle.astro";
 
 interface Category {
   id: number;
@@ -68,11 +69,11 @@ const items = await wpFetch(`/wp/v2/goods?inv-cat=${category.id}`);
         </BreadcrumbItem>
       </BreadcrumbList>
     </Breadcrumb>
-    <h1 class="mb-8 text-4xl font-bold" set:html={category.name} />
+    <MainTitle title={category.name} className="text-left"/>
     {
       category.description && (
         <div
-          class="mb-8 prose prose-lg max-w-none"
+          class="text-xs sm:text-sm md:text-md lg:text-lg xl:text-xl mb-8 prose prose-lg max-w-none"
           set:html={category.description}
         />
       )
