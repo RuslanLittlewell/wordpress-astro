@@ -43,7 +43,6 @@ interface Good {
   featured_media?: string;
 }
 export async function getStaticPaths() {
-  const WP_URL = import.meta.env.WP_API_INTERNAL_BASE;
   // Получаем все категории
   const categories = await wpFetch(`/wp/v2/inv-cat`);
 
@@ -63,7 +62,7 @@ export async function getStaticPaths() {
 
   return paths.flat();
 }
-
+const WP_URL = import.meta.env.WP_API_INTERNAL_BASE;
 const { good, category } = Astro.props;
 const seo = good.acf.seo;
 ---
@@ -119,7 +118,7 @@ const seo = good.acf.seo;
               price1Day={good.acf?.price_1_day}
               price2Day={good.acf?.price_2_day}
               additionalItem={good.acf?.additional_item}
-              url="http://localhost:8080/wp-json/"
+              url="http://13.61.2.249/wp-json"
             />
           </div>
         </div>
