@@ -25,7 +25,6 @@ export async function fetchGoodsWithACF(ids: number[]): Promise<GoodsItem[]> {
   });
 }
 
-
 export async function wpFetch(url: string) {
   const res = await fetch(`${WP}${url}`);
   const data = await res.json();
