@@ -33,9 +33,10 @@ type FormValues = z.infer<typeof schema>;
 
 interface Props {
   url: string;
+  className?: string
 }
 
-export const CallbackButton: FC<Props> = ({ url }) => {
+export const CallbackButton: FC<Props> = ({ url, className }) => {
   const [open, setOpen] = useState(false);
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
@@ -70,7 +71,7 @@ export const CallbackButton: FC<Props> = ({ url }) => {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant="outline">Заказать звонок</Button>
+        <Button variant="outline" className={className}>Заказать звонок</Button>
       </PopoverTrigger>
 
       <PopoverContent className="w-80 border-2 border-indigo-200 bg-gray-100">

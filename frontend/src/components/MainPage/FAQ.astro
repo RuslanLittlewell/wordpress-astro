@@ -10,11 +10,17 @@ export interface Points {
 const { data } = Astro.props as {
   data: { title: string; points: Points[] };
 };
-const terms = data.points.map(i => ({title: i.question, description: i.answer }))
+const terms = data.points.map((i) => ({
+  title: i.question,
+  description: i.answer,
+}));
 ---
-<section class="py-16 shadow-[inset_0_0_50px_rgba(99,102,241,0.35)]">
-    <Container>
-        <MainTitle title={data.title} />
-        <AccordionTerms {terms} client:load/>
-    </Container>
+
+<section
+  class="py-8 sm:py-12 md:py-16 lg:py-20 shadow-[inset_0_0_50px_rgba(99,102,241,0.35)]"
+>
+  <Container>
+    <MainTitle title={data.title} />
+    <AccordionTerms {terms} client:load />
+  </Container>
 </section>

@@ -92,7 +92,7 @@ export const OrderForm = ({
       price:
         values.rentalPeriod === "1" ? `${price1Day} BYN` : `${price2Day} BYN`,
     };
-    if(additionalItem) {
+    if (additionalItem) {
       openAddItemModal(values);
     } else {
       sendData(formatData);
@@ -122,7 +122,9 @@ export const OrderForm = ({
           name="rentalPeriod"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-xl">Срок аренды</FormLabel>
+              <FormLabel className="text-sm sm:text-md md:text-lg lg:text-xl">
+                Срок аренды
+              </FormLabel>
               <FormControl>
                 <div className="mb-2 rounded-lg pt-4">
                   <RadioGroup
@@ -138,15 +140,17 @@ export const OrderForm = ({
                       />
                       <label
                         htmlFor="period-1"
-                        className="block cursor-pointer rounded-xl border p-4 transition bg-white/50
+                        className="block cursor-pointer rounded-xl border px-4 p-2 md:p-3 lg:p-4 transition bg-white/50
                  hover:bg-zinc-50
                  peer-data-[state=checked]:border-indigo-500
                  peer-data-[state=checked]:ring-2
-                 peer-data-[state=checked]:ring-indigo-200"
+                 peer-data-[state=checked]:ring-indigo-200
+                 text-sm sm:text-md md:text-lg lg:text-xl 
+                 "
                       >
                         <div className="flex items-center justify-between">
-                          <span className="text-xl font-semibold">1 день</span>
-                          <span className="text-xl text-indigo-700 font-bold">
+                          <span className="font-semibold">1 день</span>
+                          <span className="text-indigo-700 font-bold">
                             {p1} BYN
                           </span>
                         </div>
@@ -161,15 +165,17 @@ export const OrderForm = ({
                       />
                       <label
                         htmlFor="period-2"
-                        className="block cursor-pointer rounded-xl border p-4 transition bg-white/50
+                        className="block cursor-pointer rounded-xl border px-4 p-2 md:p-3 lg:p-4 transition bg-white/50
                  hover:bg-zinc-50
                  peer-data-[state=checked]:border-indigo-500
                  peer-data-[state=checked]:ring-2
-                 peer-data-[state=checked]:ring-indigo-200"
+                 peer-data-[state=checked]:ring-indigo-200
+                 text-sm sm:text-md md:text-lg lg:text-xl 
+                 "
                       >
                         <div className="flex items-center justify-between">
-                          <span className="text-xl font-semibold">2 дня</span>
-                          <span className="text-xl text-indigo-700 font-bold">
+                          <span className="font-semibold">2 дня</span>
+                          <span className="text-indigo-700 font-bold">
                             {p2} BYN
                           </span>
                         </div>
@@ -188,7 +194,7 @@ export const OrderForm = ({
           name="userName"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-lg">Ваше имя</FormLabel>
+              <FormLabel className="text-xs sm:text-sm md:text-md lg:text-lg">Ваше имя</FormLabel>
               <FormControl>
                 <Input
                   className="bg-white/50 h-12"
@@ -206,7 +212,7 @@ export const OrderForm = ({
           name="phone"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-lg">Номер телефона</FormLabel>
+              <FormLabel className="text-xs sm:text-sm md:text-md lg:text-lg">Номер телефона</FormLabel>
               <FormControl>
                 <Input
                   className="bg-white/50 h-12"
