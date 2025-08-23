@@ -5,11 +5,11 @@ const { category } = Astro.props;
 
 <a
   href={`/catalog/${category.slug}`}
-  class="group flex flex-col p-4 bg-white rounded-lg border hover:shadow-lg transition-all hover:-translate-y-1"
+  class="group flex flex-col p-2 sm:p-3 lg:p-4 bg-white rounded-lg border hover:shadow-lg transition-all hover:-translate-y-1"
 >
   <div class="flex-none">
     <h3
-      class="text-md font-semibold mb-2 group-hover:text-denim transition-colors"
+      class="text-[10px] text-center md:text-left md:text-sm lg:text-xl font-semibold mb-2 group-hover:text-denim transition-colors"
     >
       {category.name}
     </h3>

@@ -2,6 +2,8 @@
 import Container from "./Container.astro";
 import { CallbackButton } from "@/components/MainPage/features/Callback";
 import LogoImg from "@/assets/svg/logo.svg";
+import MobileMenu from "@/components/shared/MobileMenu";
+
 const links = [
   { href: "/", label: "Главная" },
   { href: "/catalog", label: "Каталог" },
@@ -20,21 +22,28 @@ const isActive = (href: string) => {
 ---
 
 <header class="fixed top-0 z-50 w-full bg-main-gradient shadow-md">
-  <Container class:list="w-full flex items-center justify-between p-4">
-    <div class="flex items-center gap-4">
+  <Container class:list="w-full flex items-center justify-between p-1 md:p-4">
+    <div class="flex items-center gap-1 md:gap-4">
       <div class="logo">
         <LogoImg />
       </div>
-      <div class="text-xs flex flex-col text-white">
+      <div class="text-[8px] md:text-xs flex flex-col text-white">
         <span>{data.address}</span>
-        <span>Время работы: {data.work_time}</span>
+        <span
+          ><span class="hidden sm:inline-block">Время работы:</span>
+          {data.work_time}</span
+        >
       </div>
-      <div><a href={`tel:${data.phone}`} class="text-white font-bold">{data.phone}</a></div>
+      <div class="hidden md:inline-block md:text-md lg:text-lg">
+        <a href={`tel:${data.phone}`} class="text-white font-bold"
+          >{data.phone}</a
+        >
+      </div>
     </div>
 
-    <div class="flex items-center gap-6">
+    <div class="hidden items-center gap-6 lg:flex">
       <nav>
-        <ul class="flex items-center gap-6 pb-2 text-white">
+        <ul class="flex items-center gap-2 md:gap-2 lg:gap-3 pb-2 text-white">
           {
             links.map((link) => (
               <li>
@@ -55,5 +64,6 @@ const isActive = (href: string) => {
       </nav>
       <CallbackButton client:load url="http://localhost:8080/wp-json/" />
     </div>
+    <MobileMenu {links} {data} client:load />
   </Container>
 </header>
