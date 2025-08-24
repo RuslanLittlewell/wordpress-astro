@@ -57,7 +57,7 @@ export default function MobileMenu({
           })}
    <hr />
           <CallbackButton
-            url="http://localhost:8080/wp-json/"
+            url="https://api.littlewell-app.work/wp-json/"
             className="bg-main-gradient text-white mt-4"
           />
         </DropdownMenuContent>

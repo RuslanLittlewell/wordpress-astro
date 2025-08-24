@@ -1,5 +1,5 @@
 // src/lib/wp.ts
-const WP = (import.meta.env.WP_API_INTERNAL_BASE ?? 'http://13.61.2.249/wp-json').replace(/\/$/, '');
+const WP = (import.meta.env.WP_API_INTERNAL_BASE ?? 'https://api.littlewell-app.work/wp-json').replace(/\/$/, '');
 
 export type GoodsItem = {
   id: number;
