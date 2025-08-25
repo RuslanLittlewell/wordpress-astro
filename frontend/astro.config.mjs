@@ -5,8 +5,8 @@ import { fileURLToPath } from "node:url";
 
 export default defineConfig({
   integrations: [react(), tailwind()],
-    base: '/',                
-  trailingSlash: 'never',
+  base: '/',                
+  trailingSlash: 'always',
   server: {
     port: 4321,
     host: true,
