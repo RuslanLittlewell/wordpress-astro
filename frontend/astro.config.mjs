@@ -5,13 +5,7 @@ import { fileURLToPath } from "node:url";
 
 export default defineConfig({
   integrations: [react(), tailwind()],
-  base: '/',                
-  trailingSlash: 'never',
-  server: {
-    port: 4321,
-    host: true,
-    proxy: { "/wp-json": "http://localhost:8080" },
-  },
+  trailingSlash: 'always',
   prefetch: true,
   vite: {
     resolve: {
