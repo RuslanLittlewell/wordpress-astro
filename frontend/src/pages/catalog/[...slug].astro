@@ -62,7 +62,7 @@ export async function getStaticPaths() {
 
   return paths.flat();
 }
-const WP_URL = import.meta.env.WP_API_INTERNAL_BASE;
+const { acf } = await wpFetch('/acf/v3/options/options');
 const { good, category } = Astro.props;
 const seo = good.acf.seo;
 ---
@@ -118,6 +118,7 @@ const seo = good.acf.seo;
               price1Day={good.acf?.price_1_day}
               price2Day={good.acf?.price_2_day}
               additionalItem={good.acf?.additional_item}
+              generaData={acf}
               url="https://api.littlewell-app.work/wp-json/"
             />
           </div>

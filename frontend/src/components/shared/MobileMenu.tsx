@@ -32,12 +32,13 @@ export default function MobileMenu({
           <div>
             <div className="text-xs/0 flex flex-col text-black">
               <span>{data.address}</span>
-              <span>
-                Время работы: {data.work_time}
-              </span>
+              <span>Время работы: {data.work_time}</span>
             </div>
             <div className="text-lg my-2">
-              <a href={`tel:${data.phone}`} className="text-indigo-700 font-bold">
+              <a
+                href={`tel:${data.phone}`}
+                className="text-indigo-700 font-bold"
+              >
                 {data.phone}
               </a>
             </div>
@@ -55,7 +56,7 @@ export default function MobileMenu({
               </DropdownMenuItem>
             );
           })}
-   <hr />
+          <hr />
           <CallbackButton
             url="https://api.littlewell-app.work/wp-json/"
             className="bg-main-gradient text-white mt-4"

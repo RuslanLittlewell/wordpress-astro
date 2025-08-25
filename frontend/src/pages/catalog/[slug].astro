@@ -82,7 +82,7 @@ const items = await wpFetch(`/wp/v2/goods?inv-cat=${category.id}`);
     <div
       class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 [&>*]:first:order-first"
     >
-      {items.map((item: WPItem) => <CatalogCard item={item} slug={slug} />)}
+      {items.map((item: WPItem) => <CatalogCard {item} {slug} />)}
     </div>
   </Container>
 </BaseLayout>

@@ -24,6 +24,7 @@ type OrderFormProps = {
   price2Day?: number | string;
   defaultPeriod?: "1" | "2";
   url: string;
+  generaData: any;
   additionalItem?: {
     title: string;
     description: string;
@@ -50,6 +51,7 @@ export const OrderForm = ({
   defaultPeriod = "1",
   additionalItem,
   url,
+  generaData
 }: OrderFormProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -233,7 +235,7 @@ export const OrderForm = ({
         </Button>
         <div className="mt-6 space-y-3">
           <div className="grid grid-cols-3 gap-2">
-            <PopoverPhoneButton />
+            <PopoverPhoneButton generaData={generaData}/>
 
             <a
               href="https://instagram.com/your_username"
