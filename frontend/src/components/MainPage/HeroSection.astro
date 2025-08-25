@@ -1,6 +1,6 @@
 ---
 const { data } = Astro.props;
-// import { Image } from "astro:assets";
+import { Image } from "astro:assets";
 import { Button } from "../ui/button";
 ---
 
@@ -26,7 +26,7 @@ import { Button } from "../ui/button";
     >
   </div>
 
-  <!-- <Image
+  <Image
     src={data.image}
     widths={[320, 640, 960, 1000]}
     sizes="(min-width: 768px) 50vw, 100vw"
@@ -36,11 +36,5 @@ import { Button } from "../ui/button";
     loading="eager"
     fetchpriority="high"
     decoding="async"
-  /> -->
-  <img 
-    src={data.image}
-    alt="party"
-    loading="lazy"
-    class="absolute top-0 right-0 w-full md:w-1/2 h-full object-cover h-[60vh]"
   />
 </section>
