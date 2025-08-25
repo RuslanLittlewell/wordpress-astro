@@ -88,7 +88,7 @@ const year = new Date().getFullYear();
           <ul class="mt-4 space-y-2 text-sm">
             <li>
               <a
-                href="mailto:hello@example.com"
+                href={`mailto:${data.email}`}
                 class="hover:underline underline-offset-4">{data.email}</a
               >
             </li>
