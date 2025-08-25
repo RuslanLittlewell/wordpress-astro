@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 
 export default defineConfig({
   integrations: [react(), tailwind()],
-  trailingSlash: 'always',
+  trailingSlash: 'never',
   prefetch: true,
   vite: {
     resolve: {
