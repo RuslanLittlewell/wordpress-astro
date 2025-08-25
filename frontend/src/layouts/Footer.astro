@@ -1,12 +1,122 @@
-
 ---
-import Container from '@/layouts/Container.astro';
+import Container from "@/layouts/Container.astro";
+import PayOptions from "@/assets/images/pay-options.webp";
+import { Image } from "astro:assets";
+import { PopoverPhoneButton } from "@/components/Catalog/features/PopoverPhoneButton";
+import { Send, Instagram } from "lucide-astro";
+const { data } = Astro.props;
+
+const links = [
+  { href: "/", label: "Главная" },
+  { href: "/catalog", label: "Каталог" },
+  { href: "/terms", label: "Условия" },
+  { href: "/posts", label: "Новости" },
+  { href: "/contacts", label: "Контакты" },
+];
+
+const year = new Date().getFullYear();
 ---
 
 <footer
-  class="flex items-center justify-between p-4 bg-white shadow-md bg-[linear-gradient(to_right,#5c2bd6_0%,#2d0fa9_60%)]"
+  class="bg-[linear-gradient(to_right,#5c2bd6_0%,#2d0fa9_60%)] text-white"
 >
   <Container>
-    123
+    <div class="py-10">
+      <div class="grid grid-cols-1 gap-10 md:grid-cols-12">
+        <!-- Brand / About -->
+        <div class="md:col-span-4">
+          <a href="/" class="flex items-center gap-3">
+            <img src="/logo.svg" alt="Логотип" class="h-9 w-9" />
+            <span class="text-xl font-semibold tracking-tight">Funny</span>
+          </a>
+          <p class="mt-4 text-sm/6 opacity-90">
+            Аренда оборудования для праздников в Гродно
+          </p>
+          <div class="mt-6 flex items-center gap-3">
+            <PopoverPhoneButton generaData={data} footerClass="rounded-xl bg-white/10 p-2 backdrop-blur hover:bg-white/20 transition" client:load />
+
+            <a
+              href={`https://instagram.com/${data.instagram}`}
+              aria-label="Открыть Instagram"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="rounded-xl bg-white/10 p-2 backdrop-blur hover:bg-white/20 transition"
+            >
+              <Instagram class="h-5 w-5" />
+            </a>
+
+            <a
+              href={`https://t.me/${data.telegram}`}
+              aria-label="Написать в Telegram"
+              class="rounded-xl bg-white/10 p-2 backdrop-blur hover:bg-white/20 transition"
+            >
+              <Send class="h-5 w-5" />
+            </a>
+          </div>
+        </div>
+
+        <!-- Nav -->
+        <nav class="md:col-span-4">
+          <h3
+            class="text-xs font-semibold uppercase tracking-wider text-white/80"
+          >
+            Навигация
+          </h3>
+          <ul class="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3">
+            {
+              links.map((l) => (
+                <li>
+                  <a
+                    href={l.href}
+                    class="text-sm text-white/90 hover:text-white hover:underline underline-offset-4"
+                  >
+                    {l.label}
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </nav>
+
+        <!-- Contacts / Newsletter -->
+        <div class="md:col-span-4">
+          <h3
+            class="text-xs font-semibold uppercase tracking-wider text-white/80"
+          >
+            Контакты
+          </h3>
+          <ul class="mt-4 space-y-2 text-sm">
+            <li>
+              <a
+                href="mailto:hello@example.com"
+                class="hover:underline underline-offset-4">{data.email}</a
+              >
+            </li>
+            <li>
+              <a
+                href={`tel:${data.phone}`}
+                class="hover:underline underline-offset-4">{data.phone}</a
+              >
+            </li>
+            <li class="text-white/90">{data.address}</li>
+            <li class="text-white/90">Время работы: {data.work_time}</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="mt-10 h-px bg-white/20"></div>
+
+      <!-- Bottom bar -->
+      <div
+        class="flex flex-col items-center justify-between gap-4 py-6 md:flex-row"
+      >
+        <p class="text-xs text-white/80">
+          © {year} Название бренда. Все права защищены.
+        </p>
+        <div class="flex items-center gap-6 text-xs text-white/80">
+          <Image src={PayOptions} alt="Варианты оплаты" width={500} />
+        </div>
+      </div>
+    </div>
   </Container>
 </footer>

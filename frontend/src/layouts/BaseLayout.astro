@@ -33,6 +33,6 @@ const { acf } = await wpFetch('/acf/v3/options/options');
       <slot />
       <FormStatusModal client:load />
     </main>
-    <Footer />
+    <Footer data={acf} />
   </body>
 </html>
